@@ -1,9 +1,10 @@
-// I.  Start game randomly assigning life/death values to each square.
+// I.  Start game
 const startButton = document.getElementById("startButton");
 let isGameOn = false;
 startButton.addEventListener("click", () => {
   // a. Randomly assign life/death state to each square.
   if (isGameOn === true) {
+    // Only if game isn't already running.
   } else {
     const grid = document.getElementsByClassName("grid");
     for (element of grid) {
@@ -25,6 +26,6 @@ function incrementOneGeneration() {
 
 setInterval(incrementOneGeneration, 3000);
 
-/* let el = document.getElementsByTagName("div"); /* [2]
+/* let el = document.getElementsByTagName("div")[2]
 console.log(el);
 el.style.backgroundColor = "red"; */
