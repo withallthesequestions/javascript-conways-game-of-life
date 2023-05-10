@@ -7,7 +7,16 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css" />
     <style>
-      div {
+      body {
+        background-color: darkslategray;
+      }
+      .grid {
+        display: inline-block;
+        outline: solid black 1px;
+        height: 50px;
+        width: 50px;
+      }
+      .table {
         display: inline-block;
         outline: solid black 1px;
         height: 50px;
@@ -17,19 +26,9 @@
   </head>
 
   <body>
-    <button id="startButton">Start</button> <br />
-    <p class="textUpdate">Generation 1</p>
-    <div class="grid"></div>
-    <div class="grid"></div>
-    <div class="grid"></div>
-    <br />
-    <div class="grid"></div>
-    <div class="grid"></div>
-    <div class="grid"></div>
-    <br />
-    <div class="grid"></div>
-    <div class="grid"></div>
-    <div class="grid"></div>
+    <!--     <button id="startButton">Start</button> <br />
+    <p class="textUpdate">Generation 1</p> -->
+    <div id="table"></div>
   </body>
   <script src="./script.js"></script>
 </html>
