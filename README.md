@@ -1,1 +1,1 @@
-# javascript-conways-game
+# javascript-conways-game-of-life
