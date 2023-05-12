@@ -27,7 +27,7 @@ function assignInitialValues(xIndex, yIndex){
 // c. Insert matrix into HTML
 function renderHTMLGrid(xIndex, yIndex) {
 	let parentGrid = document.getElementById("matrixTable");
-	parentGrid.innerHTML += `<div class="parentGrid">${binaryMatrix[xIndex][yIndex]}</div>`;
+	parentGrid.innerHTML += `<div class="matrixCell">${binaryMatrix[xIndex][yIndex]}</div>`;
 }
 
 // d. Check neighbor life status
