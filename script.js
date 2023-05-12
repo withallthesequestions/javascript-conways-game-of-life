@@ -1,68 +1,99 @@
-// I.  Start game
-// const startButton = document.getElementById("startButton");
-
-// a. Make a 2D matrix, capable of holding random values
+// a. Make a 2D matrix.
 let cellMatrix = [];
-const create2DMatrix = (rows, columns) => {
-  //let value = 0;
-  for (let i = 0; i < rows; i++) {
-    cellMatrix[i] = [];
-    let divGrid = document.getElementById("table");
-    divGrid.innerHTML += `<br>`;
-    for (let j = 0; j < columns; j++) {
-      //cellMatrix[i][j] = value++;
-      cellMatrix[i][j] = Math.round(Math.random()); // This sets 0/1, randomly, to represent alive or dead.
-      divGrid.innerHTML += `<div class="grid">${cellMatrix[i][j]}</div>`;
-    }
-  }
-};
+function create2DMatrix(rows, columns) {
+	for (let i = 0; i < rows; i++) {
+		cellMatrix[i] = [];
+		let divGrid = document.getElementById("table");
+		divGrid.innerHTML += `<br>`;
+		for (let j = 0; j < columns; j++) {
+			// b. Assign life/death to each cell randomly
+			cellMatrix[i][j] = Math.round(Math.random());
+			divGrid.innerHTML += `<div class="grid">${cellMatrix[i][j]}</div>`;
+		}
+	}
+	console.table(cellMatrix);
+}
 create2DMatrix(3, 3);
-console.table(cellMatrix);
 
-/* startButton.addEventListener("click", () => {
-  // b. Randomly assign life/death state to each square.
-  if (isGameOn === true) {
-    // Only if game isn't already running.
-    // Randomly assign some cells as alive, and others as dead.
-  } else {
-    const grid = document.getElementsByClassName("grid");
-    for (element of grid) {
-      const randomValue = Math.round(Math.random());
-      if (randomValue === 1) {
-        element.style.backgroundColor = "black";
-      }
-    }
-  }
-  isGameOn = true;
-}); */
-
+// c. Check neighbor life status
 function logLifeInNeighborCells(xValue, yValue) {
-  const selectedCell = cellMatrix[xValue][yValue];
-  /* If neighbor is not undefined, push cell life-value to variable. */
-  console.log(selectedCell);
-  //let totalLifeValue = []
+	let selectedCell = cellMatrix[xValue][yValue];
+	let neighborCells = [
+		cellMatrix[yValue - 1][xValue - 1],
+		cellMatrix[yValue - 1][xValue],
+		cellMatrix[yValue - 1][xValue + 1],
+		cellMatrix[yValue][xValue - 1],
+		cellMatrix[yValue][xValue],
+		cellMatrix[yValue][xValue + 1],
+		cellMatrix[yValue + 1][xValue - 1],
+		cellMatrix[yValue + 1][xValue],
+		cellMatrix[yValue + 1][xValue + 1]
+	];
+	const livingNeighborAmount = neighborCells.reduce((a, c) => a + c, 0);
+	console.log("total living neighbors=", livingNeighborAmount);
+	console.log("selected cell status=", selectedCell);
+	updateCell(selectedCell, livingNeighborAmount);
 
-  console.log(cellMatrix[yValue - 1][xValue - 1]);
-  console.log(cellMatrix[yValue - 1][xValue]);
-  console.log(cellMatrix[yValue - 1][xValue + 1]);
-  console.log(cellMatrix[yValue][xValue - 1]);
-  //console.log(cellMatrix[yValue][xValue]); // Original
-  console.log(cellMatrix[yValue][xValue + 1]);
-  console.log(cellMatrix[yValue + 1][xValue - 1]);
-  console.log(cellMatrix[yValue + 1][xValue]);
-  console.log(cellMatrix[yValue + 1][xValue + 1]);
 }
 
 logLifeInNeighborCells(1, 1);
 
+function updateCell(selectedCell, livingNeighborAmount) {
+	if (selectedCell === 1) {
+		console.log("it's 1");
+		switch (livingNeighborAmount) {
+			case 0:
+			case 1:
+				console.log("died of loneliness")
+				selectedCell = 0
+				break;
+			case 2:
+			case 3:
+				console.log("keep it alive");
+				selectedCell = 1
+				break;
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+				console.log("died of overpopulation");
+				selectedCell = 0
+				break;
+		}
+	} else {
+		console.log("it's 0");
+		switch (livingNeighborAmount) {
+			case 0:
+			case 1:
+			case 2:
+				console.log("dead");
+				selectedCell = 0
+				break;
+			case 3:
+				console.log("its alive!");
+				selectedCell = 1
+				break;
+			case 4:
+				console.log("dead");
+				selectedCell = 0
+				break;
+		}
+	}
+	console.log("selected cell status=", selectedCell);
+}
+/*
+  1. Create a function to update the grid.
+	  a. Loop through 2d array, updating all values.
+  2. Create a function that takes in the two values, and implements the logic of conway's rules.
+	  a. Check if selected cell is dead/alive
+	  b. If cell is dead, then:
+		  if, 3 neighbors are alive, then resurrect it.
+		  else, leave it dead
+	  c. If cell is alive, then:
+		  if 4 or more neighbors are alive, then kill it.
+		  if less than two neighbors are alive, then kill it.
+		  if 2-3 neighbors are alive, then resurrect it.
+ */
+
 //setInterval(incrementOneGeneration, 3000);
-
-/* HOW TO REFERENCE divs by number
-let el = document.getElementsByTagName("div")[2]
-console.log(el);
-el.style.backgroundColor = "red"; 
-
-// How to grab text content of individual div
-// console.log(document.getElementsByClassName("grid")[0].innerText);
-
-*/
