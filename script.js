@@ -7,15 +7,15 @@ let binaryMatrix = [];
 function generateMatrix(rows, columns) {
 	for (let i = 0; i < rows; i++) {
 		binaryMatrix[i] = [];
- 		let divGrid = document.getElementById("matrixTable");
-		divGrid.innerHTML += `<br>`; 
+ 		// let divGrid = document.getElementById("matrixTable");
+		// divGrid.innerHTML += `<br>`; 
 		for (let j = 0; j < columns; j++) {
 			assignInitialValues(i, j)
-			renderHTMLGrid(i, j) 
 		}
 	}
 	console.log("This is the initial grid:");
 	console.table(binaryMatrix);
+	renderHTMLGrid(XVALUE, YVALUE) 
 }
 
 generateMatrix(XVALUE, YVALUE);
@@ -25,9 +25,16 @@ function assignInitialValues(xIndex, yIndex){
 	binaryMatrix[xIndex][yIndex] = Math.round(Math.random());
 }
 // c. Insert matrix into HTML
-function renderHTMLGrid(xIndex, yIndex) {
-	let parentGrid = document.getElementById("matrixTable");
-	parentGrid.innerHTML += `<div class="matrixCell">${binaryMatrix[xIndex][yIndex]}</div>`;
+function renderHTMLGrid(rows, columns) {
+	for (let i = 0; i < rows; i++) {
+ 		let divGrid = document.getElementById("matrixTable");
+		divGrid.innerHTML += `<br>`; 
+		for (let j = 0; j < columns; j++) {
+			let parentGrid = document.getElementById("matrixTable");
+			parentGrid.innerHTML += `<div class="matrixCell">${binaryMatrix[i][j]}</div>`;
+		
+		}
+	}
 }
 
 // d. Check neighbor life status
