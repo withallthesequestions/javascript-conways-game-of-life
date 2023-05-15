@@ -1,129 +1,138 @@
-// Assign your matrix dimensions here
-const XVALUE = 3
-const YVALUE = 3
+/* PLAN
+ * Specify matrix size
+ * Create 2d array
+ * * Insert values
+ * * Assign to gen 1 2d array *DONE
+ * Evolve
+ * * Create 2d array gen 2
+ * * Evolution formula ready
+ * * * Insert values
+ * * * Replace gen 2 with gen 1
+ * Evolve
+ */
 
-// a. Make a 2D matrix, of specified size.
-let binaryMatrix = [];
-function generateMatrix(rows, columns) {
-	for (let i = 0; i < rows; i++) {
-		binaryMatrix[i] = [];
- 		// let divGrid = document.getElementById("matrixTable");
-		// divGrid.innerHTML += `<br>`; 
-		for (let j = 0; j < columns; j++) {
-			assignInitialValues(i, j)
+// 1. Generation 1
+// a. Assign your matrix dimensions here
+const X_VALUE = 3;
+const Y_VALUE = 3;
+//let MATRIX_TABLE = document.getElementById("matrixTable");
+
+// Button click
+// const button = document.getElementById("generateButton");
+// button.addEventListener("click", (event) => {
+// 	MATRIX_TABLE.innerHTML = ``;
+// 	// matrixGen1 = bufferMatrix;
+// 	// buffer = [];
+// 	renderHTMLGrid(bufferMatrix, X_VALUE, Y_VALUE);
+// 	console.log("buffer rendered");
+// 	evolveLoop(matrixGen1, bufferMatrix, X_VALUE, Y_VALUE);
+// });
+
+// a. Make an empty 2D matrix
+function generateEmptyMatrix(rowCount, colCount) {
+	let arr = [];
+	for (let i = 0; i < rowCount; i++) {
+		arr[i] = [];
+		for (let j = 0; j < colCount; j++) {
+			arr[i][j] = 0;
 		}
 	}
-	console.log("This is the initial grid:");
-	console.table(binaryMatrix);
-	renderHTMLGrid(XVALUE, YVALUE) 
+	return arr;
 }
+// let matrixGen1 = generateEmptyMatrix(X_VALUE, Y_VALUE);
+/* TEST CONDITION BELOW */
+let matrixGen1 = [
+	[1, 0, 1],
+	[0, 1, 1],
+	[1, 1, 0],
+];
+console.log("TEST MATRIX");
+console.table(matrixGen1);
 
-generateMatrix(XVALUE, YVALUE);
+// // b. Assign random starting values
+// function assignRandomValues(arr, rowCount, colCount) {
+// 	for (let i = 0; i < rowCount; i++) {
+// 		for (let j = 0; j < colCount; j++) {
+// 			arr[i][j] = Math.round(Math.random());
+// 		}
+// 	}
+// 	return arr;
+// }
+// assignRandomValues(matrixGen1, X_VALUE, Y_VALUE);
+// console.log("This is the Gen 1 matrix:");
+// console.table(matrixGen1);
 
-// b. Assign life/death value to each cell randomly
-function assignInitialValues(xIndex, yIndex){
-	binaryMatrix[xIndex][yIndex] = Math.round(Math.random());
-}
-// c. Insert matrix into HTML
-function renderHTMLGrid(rows, columns) {
-	for (let i = 0; i < rows; i++) {
- 		let divGrid = document.getElementById("matrixTable");
-		divGrid.innerHTML += `<br>`; 
-		for (let j = 0; j < columns; j++) {
-			let parentGrid = document.getElementById("matrixTable");
-			parentGrid.innerHTML += `<div class="matrixCell">${binaryMatrix[i][j]}</div>`;
-		
+// c. Pushing to HTML
+// renderHTMLGrid(matrixGen1, X_VALUE, Y_VALUE);
+// function renderHTMLGrid(matrix, rowCount, colCount) {
+// 	for (let i = 0; i < rowCount; i++) {
+// 		MATRIX_TABLE.innerHTML += `<br>`;
+// 		for (let j = 0; j < colCount; j++) {
+// 			MATRIX_TABLE.innerHTML += `<div class="matrixCell">${matrix[i][j]}</div>`;
+// 		}
+// 	}
+// }
+
+// 2. Generation 2
+// a. Create buffer Matrix (https://www.cs.cornell.edu/courses/cs4620/2019fa/cs4621/lecture07/exhibit01.html)
+let bufferMatrix = generateEmptyMatrix(X_VALUE, Y_VALUE);
+
+// b. Loop evolutionProcess over each item in old matrix
+function evolveLoop(oldArr, newArr, rowCount, colCount) {
+	for (let i = 0; i < rowCount; i++) {
+		for (let j = 0; j < colCount; j++) {
+			let prevCellStatus = oldArr[i][j];
+			let neighborCount = countNeighbors(oldArr, i, j);
+			let newValue = newCellStatus(prevCellStatus, neighborCount);
+			newArr[i][j] = newValue;
+			// /* TESTING UPDATED VALUE BELOW. OUTPUT BAD */
+			// console.log(newCellStatus(prevCellStatus, neighborCount));
 		}
 	}
-}
 
-// d. Check neighbor life status
-function logLivingNeighbors(xValue, yValue) {
-	let selectedCell = binaryMatrix[xValue][yValue];
-	let neighborCells = [
-		binaryMatrix[yValue - 1][xValue - 1],
-		binaryMatrix[yValue - 1][xValue],
-		binaryMatrix[yValue - 1][xValue + 1],
-		binaryMatrix[yValue][xValue - 1],
-		binaryMatrix[yValue][xValue],
-		binaryMatrix[yValue][xValue + 1],
-		binaryMatrix[yValue + 1][xValue - 1],
-		binaryMatrix[yValue + 1][xValue],
-		binaryMatrix[yValue + 1][xValue + 1]
+	return newArr;
+}
+console.log("This is the Buffer Matrix:");
+evolveLoop(matrixGen1, bufferMatrix, X_VALUE, Y_VALUE);
+console.table(bufferMatrix);
+
+// Zintis suggested optional chaining. This checks if the value exists before accessing it. It prevents undefined and other errors.
+// The order of x and y here are inconsistent. I think the sub-arrays need to be restructured, x first then y.
+function countNeighbors(arr, xValue, yValue) {
+	const neighborCells = [
+		arr?.[xValue - 1]?.[yValue - 1],
+		arr?.[xValue - 1]?.[yValue],
+		arr?.[xValue - 1]?.[yValue + 1],
+		arr?.[xValue]?.[yValue - 1],
+		/* 		arr?.[xValue]?.[yValue], */
+		arr?.[xValue]?.[yValue + 1],
+		arr?.[xValue + 1]?.[yValue - 1],
+		arr?.[xValue + 1]?.[yValue],
+		arr?.[xValue + 1]?.[yValue + 1],
 	];
-	const livingNeighborAmount = neighborCells.reduce((a, c) => a + c, 0);
-	console.log("selected cell value=", selectedCell);
-	console.log("number of living neighbors=", livingNeighborAmount);
-	updateCell(selectedCell, livingNeighborAmount);
+	// Filter for edge cases here
+	let filteredNeighbors = neighborCells.filter((x) => typeof x === "number");
+	let finalValue = filteredNeighbors.reduce((a, c) => a + c, 0);
+	return finalValue;
 }
-logLivingNeighbors(1, 1);
 
-// e. Update selected cell according to rules.
-function updateCell(selectedCell, livingNeighborAmount) {
-	if (selectedCell === 1) {
-		console.log("starting state: 1");
-		switch (livingNeighborAmount) {
-			case 0:
-			case 1:
-				console.log("died of loneliness")
-				selectedCell = 0
-				break;
-			case 2:
-			case 3:
-				console.log("keep it alive");
-				selectedCell = 1
-				break;
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
-				console.log("died of overpopulation");
-				selectedCell = 0
-				break;
+/* let newValue = 1;
+ * function, takes prevCellStatus and neighborCount, and outputs newValue
+ */
+
+function newCellStatus(prevCellStatus, neighborCount) {
+	/* TESTING: PROBLEMS HAPPEN AROUND HERE */
+	if (prevCellStatus === 1) {
+		if (neighborCount === 2 || neighborCount === 3) {
+			return 1;
+		} else {
+			return 0;
 		}
 	} else {
-		console.log("starting state: 0");
-		switch (livingNeighborAmount) {
-			case 0:
-			case 1:
-			case 2:
-				console.log("dead");
-				selectedCell = 0
-				break;
-			case 3:
-				console.log("its alive!");
-				selectedCell = 1
-				break;
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
-				console.log("dead");
-				selectedCell = 0
-				break;
+		if (neighborCount === 3) {
+			return 1;
+		} else {
+			return 0;
 		}
 	}
-	console.log("updated cell status=", selectedCell);
 }
-
-/* Next: Generate new grid, with empty values, and push the new values in.
- * 
- */
-
-/*
-1. Create a function to update the grid.
-	a. Loop through 2d array, updating all values.
-2. Create a function that takes in the two values, and implements the logic of conway's rules.
-	a. Check if selected cell is dead/alive
-	b. If cell is dead, then:
-		if, 3 neighbors are alive, then resurrect it.
-		else, leave it dead
-	c. If cell is alive, then:
-		if 4 or more neighbors are alive, then kill it.
-		if less than two neighbors are alive, then kill it.
-		if 2-3 neighbors are alive, then resurrect it.
- */
-
-//setInterval(incrementOneGeneration, 3000);
