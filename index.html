@@ -8,25 +8,32 @@
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      background-color: darkslategray;
+      background-color: #303440;
+      color: #B7CE63
     }
 
     .cellAlive {
       display: inline-block;
-      outline: solid black 1px;
+      /* outline: solid black 1px; */
       height: 50px;
       width: 50px;
       text-align: center;
-      background-color: royalblue;
+      background-color: #5A75AE;
+      line-height: 3em;
     }
 
     .cellDead {
       display: inline-block;
-      outline: solid black 1px;
+      /*  outline: solid black 1px; */
       height: 50px;
       width: 50px;
       text-align: center;
-      background-color: cornflowerblue;
+      background-color: #284077;
+      line-height: 3em;
+    }
+
+    a {
+      color: white;
     }
   </style>
 </head>
@@ -34,6 +41,7 @@
 <body>
   <div id="matrixTable"></div>
   <button id="generateButton">Next Generation</button> <br />
+  Note: You can test patterns here: <a href="https://www.dcode.fr/game-of-life">https://www.dcode.fr/game-of-life</a>
 </body>
 <script src="./script.js"></script>
 </html>

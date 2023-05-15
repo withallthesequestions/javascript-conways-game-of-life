@@ -13,8 +13,8 @@
 
 // 1. Generation 1
 // a. Assign your matrix dimensions here
-const X_VALUE = 3;
-const Y_VALUE = 3;
+const X_VALUE = 12;
+const Y_VALUE = 12;
 let MATRIX_TABLE = document.getElementById("matrixTable");
 
 // Button click
