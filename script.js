@@ -1,77 +1,78 @@
 /* PLAN
  * Specify matrix size
- * Create 2d array
- * * Insert values
- * * Assign to gen 1 2d array *DONE
+ * Implement manual update functionality
+ * * ...Hello
+ * Create first-generation matrix (blank)
+ * * Assign values
+ * * Assign to DisplayMatrix
  * Evolve
- * * Create 2d array gen 2
- * * Evolution formula ready
- * * * Insert values
- * * * Replace gen 2 with gen 1
- * Evolve
+ * * Create BufferMatrix (blank)
+ * * Apply EvolutionLoop to DisplayMatrix, output values to BufferMatrix.
+ * * * Replace DisplayMatrix with BufferMatrix
  */
 
 // 1. Generation 1
-// a. Assign your matrix dimensions here
-const X_VALUE = 12;
-const Y_VALUE = 12;
-let MATRIX_TABLE = document.getElementById("matrixTable");
+// a. Assign matrix dimensions here
+const X_VALUE = 8;
+const Y_VALUE = 8;
+const MATRIX_TABLE = document.getElementById("matrixTable");
 
 // Button click
-const button = document.getElementById("generateButton");
-button.addEventListener("click", (event) => {
-	MATRIX_TABLE.innerHTML = ``;
-	matrixGen1 = bufferMatrix;
-	buffer = [];
+const nextGenerationButton = document.getElementById("generateButton");
+nextGenerationButton.addEventListener("click", (event) => {
+	MATRIX_TABLE.innerHTML = "";
+	evolveLoop(displayMatrix, bufferMatrix, X_VALUE, Y_VALUE);
 	renderHTMLGrid(bufferMatrix, X_VALUE, Y_VALUE);
+	displayMatrix = bufferMatrix;
 	console.log("buffer rendered");
-	evolveLoop(matrixGen1, bufferMatrix, X_VALUE, Y_VALUE);
+	evolveLoop(displayMatrix, bufferMatrix, X_VALUE, Y_VALUE);
 });
 
-// a. Make an empty 2D matrix
+// b. Make a blank 2D matrix
 function generateEmptyMatrix(rowCount, colCount) {
-	let arr = [];
+	const array = [];
 	for (let i = 0; i < rowCount; i++) {
-		arr[i] = [];
+		array[i] = [];
 		for (let j = 0; j < colCount; j++) {
-			arr[i][j] = 0;
+			array[i][j] = 0;
 		}
 	}
-	return arr;
+	return array;
 }
-let matrixGen1 = generateEmptyMatrix(X_VALUE, Y_VALUE);
-// /* TEST CONDITION BELOW */
-// let matrixGen1 = [
+let displayMatrix = generateEmptyMatrix(X_VALUE, Y_VALUE);
+// /* TEST CONDITION*/
+// let displayMatrix = [
 // 	[1, 0, 1],
 // 	[0, 1, 1],
 // 	[1, 1, 0],
 // ];
 // console.log("TEST MATRIX");
-// console.table(matrixGen1);
+// console.table(displayMatrix);
 
-// b. Assign random starting values
-function assignRandomValues(arr, rowCount, colCount) {
+// c. Assign random values to 2D matrix
+function assignRandomValues(array, rowCount, colCount) {
 	for (let i = 0; i < rowCount; i++) {
 		for (let j = 0; j < colCount; j++) {
-			arr[i][j] = Math.round(Math.random());
+			array[i][j] = Math.round(Math.random());
 		}
 	}
-	return arr;
+	return array;
 }
-assignRandomValues(matrixGen1, X_VALUE, Y_VALUE);
-console.log("This is the Gen 1 matrix:");
-console.table(matrixGen1);
+assignRandomValues(displayMatrix, X_VALUE, Y_VALUE);
+console.log("Display Matrix:");
+console.table(displayMatrix);
 
-// c. Pushing to HTML
-renderHTMLGrid(matrixGen1, X_VALUE, Y_VALUE);
+// d. Push matrix to HTML
+renderHTMLGrid(displayMatrix, X_VALUE, Y_VALUE);
 function renderHTMLGrid(matrix, rowCount, colCount) {
+	MATRIX_TABLE.innerHTML = "";
 	for (let i = 0; i < rowCount; i++) {
 		MATRIX_TABLE.innerHTML += `<br>`;
 		for (let j = 0; j < colCount; j++) {
 			if (matrix[i][j] === 1) {
-				MATRIX_TABLE.innerHTML += `<div class="cellAlive">${matrix[i][j]}</div>`;
+				MATRIX_TABLE.innerHTML += `<div class="cellAlive" data-x="${i}" data-y="${j}">${matrix[i][j]}</div>`;
 			} else {
-				MATRIX_TABLE.innerHTML += `<div class="cellDead">${matrix[i][j]}</div>`;
+				MATRIX_TABLE.innerHTML += `<div class="cellDead" data-x="${i}" data-y="${j}">${matrix[i][j]}</div>`;
 			}
 		}
 	}
@@ -79,48 +80,43 @@ function renderHTMLGrid(matrix, rowCount, colCount) {
 
 // 2. Generation 2
 // a. Create buffer Matrix (https://www.cs.cornell.edu/courses/cs4620/2019fa/cs4621/lecture07/exhibit01.html)
-let bufferMatrix = generateEmptyMatrix(X_VALUE, Y_VALUE);
+const bufferMatrix = generateEmptyMatrix(X_VALUE, Y_VALUE);
 
-// b. Loop evolutionProcess over each item in old matrix
-function evolveLoop(oldArr, newArr, rowCount, colCount) {
-	for (let i = 0; i < rowCount; i++) {
-		for (let j = 0; j < colCount; j++) {
-			let prevCellStatus = oldArr[i][j];
-			let neighborCount = countNeighbors(oldArr, i, j);
-			let newValue = newCellStatus(prevCellStatus, neighborCount);
-			newArr[i][j] = newValue;
-		}
-	}
-
-	return newArr;
-}
-console.log("This is the Buffer Matrix:");
-evolveLoop(matrixGen1, bufferMatrix, X_VALUE, Y_VALUE);
-console.table(bufferMatrix);
-
-// Z suggested optional chaining. This checks if the value exists before accessing it. It prevents undefined and other errors.
-// The order of x and y here are inconsistent. I think the sub-arrays need to be restructured, x first then y.
-function countNeighbors(arr, xValue, yValue) {
+// Implemented optional chaining, per Z. This checks if the value exists before accessing it. It prevents undefined and other errors.
+function countNeighbors(matrix, xValue, yValue) {
 	const neighborCells = [
-		arr?.[xValue - 1]?.[yValue - 1],
-		arr?.[xValue - 1]?.[yValue],
-		arr?.[xValue - 1]?.[yValue + 1],
-		arr?.[xValue]?.[yValue - 1],
+		matrix?.[xValue - 1]?.[yValue - 1],
+		matrix?.[xValue - 1]?.[yValue],
+		matrix?.[xValue - 1]?.[yValue + 1],
+		matrix?.[xValue]?.[yValue - 1],
 		/* 		arr?.[xValue]?.[yValue], */
-		arr?.[xValue]?.[yValue + 1],
-		arr?.[xValue + 1]?.[yValue - 1],
-		arr?.[xValue + 1]?.[yValue],
-		arr?.[xValue + 1]?.[yValue + 1],
+		matrix?.[xValue]?.[yValue + 1],
+		matrix?.[xValue + 1]?.[yValue - 1],
+		matrix?.[xValue + 1]?.[yValue],
+		matrix?.[xValue + 1]?.[yValue + 1],
 	];
-	// Filter for edge cases here
-	let filteredNeighbors = neighborCells.filter((x) => typeof x === "number");
-	let finalValue = filteredNeighbors.reduce((a, c) => a + c, 0);
+	// Filter for edge cases: Only numbers enter the .reduce() function, undefineds are treated as zeroes.
+	const filteredNeighbors = neighborCells.filter((x) => typeof x === "number");
+	const finalValue = filteredNeighbors.reduce((a, c) => a + c, 0);
 	return finalValue;
 }
 
-/* let newValue = 1;
- * function, takes prevCellStatus and neighborCount, and outputs newValue
- */
+// b. evolveLoop over each item in old matrix
+function evolveLoop(oldMatrix, newMatrix, rowCount, colCount) {
+	for (let i = 0; i < rowCount; i++) {
+		for (let j = 0; j < colCount; j++) {
+			let prevCellStatus = oldMatrix[i][j];
+			let neighborCount = countNeighbors(oldMatrix, i, j);
+			let newValue = newCellStatus(prevCellStatus, neighborCount);
+			newMatrix[i][j] = newValue;
+		}
+	}
+
+	return newMatrix;
+}
+console.log("Buffer Matrix Preview:");
+evolveLoop(displayMatrix, bufferMatrix, X_VALUE, Y_VALUE);
+console.table(bufferMatrix);
 
 function newCellStatus(prevCellStatus, neighborCount) {
 	if (prevCellStatus === 1) {
@@ -137,3 +133,31 @@ function newCellStatus(prevCellStatus, neighborCount) {
 		}
 	}
 }
+
+document
+	.getElementById("matrixTable")
+	.addEventListener("click", function (event) {
+		// console.log(event.target.className);
+		// event.target.className = "cellAlive";
+		// event.target.innerHTML = "1";
+		// console.log(event.target.attributes);
+		/* 		console.log(
+			event.target.attributes[1].name,
+			event.target.attributes[1].value,
+			event.target.attributes[2].name,
+			event.target.attributes[2].value
+		); */
+		let xValue = event.target.attributes[1].value;
+		let yValue = event.target.attributes[2].value;
+		if (displayMatrix[xValue][yValue] === 1) {
+			displayMatrix[xValue][yValue] = 0;
+		} else {
+			displayMatrix[xValue][yValue] = 1;
+		}
+		console.log("Current displayMatrix");
+		console.table(displayMatrix);
+		console.log("Value update:", displayMatrix[xValue][yValue]);
+		renderHTMLGrid(displayMatrix, X_VALUE, Y_VALUE);
+		console.log("buffermatrix");
+		console.table(bufferMatrix);
+	});
